@@ -349,4 +349,4 @@ setInterval(() => {
   console.log(gameOver);
   
   moveTetrominoDown();
-}, 10000 / fps);
+}, 8000 / fps);
