@@ -3,6 +3,8 @@ const ctx = canvas.getContext("2d");
 const tetrominoCanvas = document.getElementById("tetrominoCanvas");
 const ctx2 = tetrominoCanvas.getContext("2d");
 const div = document.getElementById("tetrominoshowed");
+const gameOverDiv = document.getElementById("gameover")
+const restart = document.getElementById("restart");
 
 tetrominoCanvas.width = tetrominoCanvas.offsetWidth;
 tetrominoCanvas.height = tetrominoCanvas.offsetHeight;
@@ -14,6 +16,7 @@ const fps = 60;
 let tetrominoX = 125;
 let tetrominoY = 0;
 let tetrominoCounter = 0;
+let gameOver = false;
 
 ctx.fillStyle = "#fff";
 ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -66,7 +69,6 @@ function drawArea() {
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  // Draw grid lines with a subtle effect
   ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
   ctx.lineWidth = 0.5;
 
@@ -86,6 +88,7 @@ function drawArea() {
 }
 
 function drawTetromino(tetromino, x, y) {
+  if(gameOver)return;
   for (let i = 0; i < tetromino.shape.length; i++) {
     for (let j = 0; j < tetromino.shape[i].length; j++) {
       if (tetromino.shape[i][j]) {
@@ -127,6 +130,15 @@ function drawTetromino(tetromino, x, y) {
           gridSize
         );
       }
+    }
+  }
+}
+
+function checkIsGameOver(){
+  for(let i =0; i<gameArea[0].length; i++ ){
+    if(gameArea[0][i] === 1){
+      gameOver=true;
+      gameOverDiv.style.display = "block";
     }
   }
 }
@@ -255,6 +267,7 @@ function rotateTetromino() {
 }
 
 function showTetromino() {
+  if(gameOver)return
   const nextTetrominoIndex = (tetrominoCounter + 1) % tetrominos.length;
   const tetromino = tetrominos[nextTetrominoIndex];
 
@@ -318,6 +331,11 @@ function showTetromino() {
   }
 }
 
+restart.addEventListener("click",()=>{
+  gameOver=false;
+  gameOverDiv.style.display = "none";
+  gameArea.forEach((row) => row.fill(0));
+})
 setInterval(() => {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   ctx2.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -327,5 +345,8 @@ setInterval(() => {
   drawGameArea();
   drawTetromino(tetrominos[tetrominoCounter], tetrominoX, tetrominoY);
 
+  checkIsGameOver();
+  console.log(gameOver);
+  
   moveTetrominoDown();
 }, 10000 / fps);
