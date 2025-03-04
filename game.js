@@ -92,7 +92,6 @@ function drawTetromino(tetromino, x, y) {
   for (let i = 0; i < tetromino.shape.length; i++) {
     for (let j = 0; j < tetromino.shape[i].length; j++) {
       if (tetromino.shape[i][j]) {
-        // Create block gradient
         const blockGradient = ctx.createLinearGradient(
           x + j * gridSize,
           y + i * gridSize,
@@ -102,7 +101,6 @@ function drawTetromino(tetromino, x, y) {
         blockGradient.addColorStop(0, tetromino.color);
         blockGradient.addColorStop(1, tetromino.borderColor);
         
-        // Draw block with gradient
         ctx.fillStyle = blockGradient;
         ctx.fillRect(
           x + j * gridSize,
@@ -110,8 +108,6 @@ function drawTetromino(tetromino, x, y) {
           gridSize,
           gridSize
         );
-
-        // Add highlight effect
         ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
         ctx.fillRect(
           x + j * gridSize,
@@ -120,7 +116,6 @@ function drawTetromino(tetromino, x, y) {
           2
         );
 
-        // Add border
         ctx.strokeStyle = tetromino.borderColor;
         ctx.lineWidth = 1;
         ctx.strokeRect(
@@ -156,27 +151,24 @@ function moveTetrominoDown() {
 
 function placeTetromino() {
   const tetromino = tetrominos[tetrominoCounter];
-  // Place the tetromino on the game area
   for (let i = 0; i < tetromino.shape.length; i++) {
     for (let j = 0; j < tetromino.shape[i].length; j++) {
       if (tetromino.shape[i][j]) {
         gameArea[(tetrominoY + i * gridSize) / gridSize][
           (tetrominoX + j * gridSize) / gridSize
-        ] = 1; // Save the color of the tetromino instead of just 1
+        ] = 1; 
       }
     }
   }
-  clearFullLines(); // Call the function to check and clear any full lines
+  clearFullLines(); 
 }
 
 function clearFullLines() {
   for (let y = gameArea.length - 1; y >= 0; y--) {
-    // Check if the current row is completely filled
     if (gameArea[y].every((cell) => cell !== 0)) {
-      // If the row is full, clear it and shift rows above it down
-      gameArea.splice(y, 1); // Remove the filled row
-      gameArea.unshift(Array(gameArea[0].length).fill(0)); // Add an empty row at the top
-      y++; // Stay at the same row to check for more full lines after shifting
+      gameArea.splice(y, 1);
+      gameArea.unshift(Array(gameArea[0].length).fill(0)); 
+      y++; 
     }
   }
 }
@@ -185,7 +177,6 @@ function drawGameArea() {
   for (let y = 0; y < gameArea.length; y++) {
     for (let x = 0; x < gameArea[y].length; x++) {
       if (gameArea[y][x] === 1) {
-        // Create gradient for placed blocks
         const blockGradient = ctx.createLinearGradient(
           x * gridSize,
           y * gridSize,
@@ -198,11 +189,8 @@ function drawGameArea() {
         ctx.fillStyle = blockGradient;
         ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
         
-        // Add highlight effect
         ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
         ctx.fillRect(x * gridSize, y * gridSize, gridSize, 2);
-        
-        // Add border
         ctx.strokeStyle = "#2C6BA0";
         ctx.lineWidth = 1;
         ctx.strokeRect(x * gridSize, y * gridSize, gridSize, gridSize);
@@ -214,16 +202,15 @@ function drawGameArea() {
 function checkCollision() {
   const tetromino = tetrominos[tetrominoCounter];
 
-  // Her hücreyi kontrol et
   for (let i = 0; i < tetromino.shape.length; i++) {
     for (let j = 0; j < tetromino.shape[i].length; j++) {
       if (tetromino.shape[i][j]) {
-        // Tetromino'nun aşağısındaki hücrenin canvas dışında olup olmadığını kontrol et
+        
         if (
-          tetrominoY + (i + 1) * gridSize >= canvasHeight || // Eğer tetromino aşağıya doğru canvas dışına çıkarsa
+          tetrominoY + (i + 1) * gridSize >= canvasHeight || 
           gameArea[(tetrominoY + (i + 1) * gridSize) / gridSize][
             (tetrominoX + j * gridSize) / gridSize
-          ] === 1 // Ya da mevcut alanda başka bir blok varsa
+          ] === 1 
         ) {
           return true;
         }
@@ -254,12 +241,10 @@ document.addEventListener("keydown", (e) => {
 function rotateTetromino() {
   const tetromino = tetrominos[tetrominoCounter];
 
-  // Yeni bir döndürülmüş matris oluştur
+
   const rotatedShape = tetromino.shape[0].map((_, i) =>
     tetromino.shape.map((row) => row[i]).reverse()
   );
-
-  // Dönüşün sınırları aşıp aşmadığını kontrol et
   const tetrominoWidth = rotatedShape[0].length * gridSize;
   if (tetrominoX + tetrominoWidth <= canvasWidth) {
     tetromino.shape = rotatedShape;
@@ -280,7 +265,6 @@ function showTetromino() {
   const tetrominoXForCanvas2 = centerX - tetrominoWidth / 2;
   const tetrominoYForCanvas2 = centerY - tetrominoHeight / 2;
 
-  // Draw background for next piece preview
   const previewGradient = ctx2.createLinearGradient(0, 0, 0, tetrominoCanvas.height);
   previewGradient.addColorStop(0, "#2d2d2d");
   previewGradient.addColorStop(1, "#1a1a1a");
@@ -290,7 +274,6 @@ function showTetromino() {
   for (let i = 0; i < tetromino.shape.length; i++) {
     for (let j = 0; j < tetromino.shape[i].length; j++) {
       if (tetromino.shape[i][j]) {
-        // Create gradient for preview piece
         const blockGradient = ctx2.createLinearGradient(
           tetrominoXForCanvas2 + j * gridSize,
           tetrominoYForCanvas2 + i * gridSize,
@@ -308,7 +291,6 @@ function showTetromino() {
           gridSize
         );
 
-        // Add highlight effect
         ctx2.fillStyle = "rgba(255, 255, 255, 0.2)";
         ctx2.fillRect(
           tetrominoXForCanvas2 + j * gridSize,
@@ -317,7 +299,6 @@ function showTetromino() {
           2
         );
 
-        // Add border
         ctx2.strokeStyle = tetromino.borderColor;
         ctx2.lineWidth = 1;
         ctx2.strokeRect(
